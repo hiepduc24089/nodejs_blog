@@ -1,0 +1,25 @@
+<div class="mt-4">
+  <h3>Tạo khoá học</h3>
+  <form method="POST" action="/courses/store">
+    <div class="mb-3">
+      <label for="name" class="form-label">Tên khoá học</label>
+      <input type="text" class="form-control" name="name"/>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Mô tả khoá học</label>
+      <input type="text" class="form-control" name="description"/>
+    </div>
+    <div class="mb-3">
+      <label for="videoId" class="form-label">VideoID</label>
+      <input type="text" class="form-control" name="videoId"/>
+    </div>
+    <label for="videoId" class="form-label">Level</label>
+    <select class="form-select mb-3" name="level">
+        <option selected>Chọn trình độ</option>
+        <option value="Trình độ cơ bản">Cơ bản</option>
+        <option value="Trình độ dễ">Dễ</option>
+        <option value="Trình độ nâng cao">Nâng cao</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Thêm khoá học</button>
+  </form>
+</div>

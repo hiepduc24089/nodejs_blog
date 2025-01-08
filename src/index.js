@@ -4,6 +4,10 @@ import { engine } from 'express-handlebars';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import route from './routes/index.js';
+import db from './config/db/index.js';
+
+//Connect to DB
+db.connect();
 
 const app = express();
 const port = 3000;
@@ -22,7 +26,7 @@ app.use(
 app.use(express.json());
 
 //HTTP logger
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 // Template engine
 app.engine(
@@ -32,11 +36,11 @@ app.engine(
   }),
 );
 app.set('view engine', 'hbs'); //Sử dụng handlebars làm view engine
-app.set('views', path.join(__dirname, 'resources/views')); //Đường dẫn đến thư mục chứa view
+app.set('views', path.join(__dirname, 'resources', 'views')); //Đường dẫn đến thư mục chứa view
 
 //Route init
 route(app);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`App listening on port ${port}`);
 });
