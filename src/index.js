@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import methodOverride from 'method-override';
 import { engine } from 'express-handlebars';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -25,14 +26,22 @@ app.use(
 );
 app.use(express.json());
 
+app.use(methodOverride('_method'));
+
 //HTTP logger
-// app.use(morgan('combined'));
+app.use(morgan('combined'));
 
 // Template engine
 app.engine(
   'hbs',
   engine({
     extname: '.hbs',
+    helpers: {
+      sum: (a, b) => a + b,
+      ifEquals: (arg1, arg2, options) => {
+        return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+      },
+    },
   }),
 );
 app.set('view engine', 'hbs'); //Sử dụng handlebars làm view engine
