@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongooseDelete from 'mongoose-delete';
 
 const Schema = mongoose.Schema;
 
@@ -12,5 +13,12 @@ const Course = new Schema({
 }, {
     timestamps: true,
 });
+
+//Add plugin
+Course.plugin(mongooseDelete, {
+    overrideMethods: 'all', // Bắt buộc để ghi đè findDeleted
+    deletedAt: true,        // Kích hoạt trường deletedAt
+});
+
 
 export default mongoose.model('Course', Course);

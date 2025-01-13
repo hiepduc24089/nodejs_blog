@@ -1,10 +1,7 @@
 <form class="mt-4" name="container-form" method="POST" action="/courses/handle-form-action">
-  <div class="d-flex justify-content-between">
-    <h3>Khoá học của tôi</h3>
-    <div class="d-flex align-items-center">
-      <a href="/courses/create" class="btn btn-success">Đăng khoá học</a>
-      <a href="/me/trash/courses" class="btn btn-dark ms-2">Thùng rác ({{deletedCount}})</a>
-    </div>
+  <div class="d-flex justify-content-between align-items-center">
+    <h3>Khoá học đã xoá</h3>
+    <a href="/me/stored/courses" class="btn btn-success">Danh sách khoá học</a>
   </div>
 
   <div class="mt-4 d-flex align-items-center">
@@ -16,7 +13,8 @@
     </div>
     <select class="form-control form-control-sm checkbox-select-all-options" name="action" required>
       <option value="">-- Chọn hành động --</option>
-      <option value="delete">Xoá</option>
+      <option value="restore">Khôi phục</option>
+      <option value="force_delete">Xoá vĩnh viễn</option>
     </select>
     <button class="btn btn-primary btm-sm disabled btn-check-all-submit">Thực hiện</button>
   </div>
@@ -28,7 +26,7 @@
         <th scope="col">#</th>
         <th scope="col">Tên khoá học</th>
         <th scope="col">Trình độ</th>
-        <th scope="col">Thời gian tạo</th>
+        <th scope="col">Thời gian xoá</th>
         <th scope="col">Hành động</th>
       </tr>
     </thead>
@@ -43,18 +41,18 @@
         <th scope="row">{{sum @index 1}}</th>
         <td>{{this.name}}</td>
         <td>{{this.level}}</td>
-        <td>{{this.createdAt}}</td>
+        <td>{{this.deletedAt}}</td>
         <td>
-          <a href="/courses/{{this._id}}/edit" class="btn btn-primary">Sửa</a>
+          <a href="#" class="btn btn-primary btn-restore" data-id="{{this._id}}">Khôi phục</a>
           <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-id="{{this._id}}"
-            data-bs-target="#delete-course-modal">Xóa</button>
+            data-bs-target="#delete-course-modal">Xóa vĩnh viễn</button>
         </td>
       </tr>
       {{else}}
       <tr>
         <td colspan="5" class="text-center">
-          Bạn chưa đăng khoá học nào
-          <a href="/courses/create">Đăng khoá học</a>
+          Thùng rác trống
+          <a href="/me/stored/courses">Danh sách khoá học</a>
         </td>
       </tr>
       {{/each}}
@@ -71,7 +69,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Bạn chắc chắn muốn xoá khoá học này?</p>
+        <p>Bạn chắc chắn muốn xoá vĩnh viễn khoá học này?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
@@ -81,8 +79,8 @@
   </div>
 </div>
 
-{{!-- Delete Form --}}
 <form method="POST" name="delete-course-form"></form>
+<form method="POST" name="restore-course-form"></form>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -90,6 +88,8 @@
     var deleteForm = document.forms['delete-course-form'];
     var containerForm = document.forms['container-form'];
     var btnDeleteCourse = document.getElementById('btn-delete-course');
+    var restoreForm = document.forms['restore-course-form'];
+    var btnRestoreCourse = $('.btn-restore');
     var checkboxAll = $('#checkbox-all');
     var courseItemCheckbox = $('input[name="courseIds[]"]');
     var checkAllSubmitBtn = $('.btn-check-all-submit')
@@ -100,9 +100,17 @@
     });
 
     btnDeleteCourse.onclick = function () {
-      deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+      deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
       deleteForm.submit();
     }
+
+    btnRestoreCourse.click(function (e) {
+      e.preventDefault();
+
+      var courseID = $(this).data('id');
+      restoreForm.action = '/courses/' + courseID + '/restore?_method=PATCH';
+      restoreForm.submit();
+    })
 
     //Checkbox all click
     checkboxAll.change(function(){
